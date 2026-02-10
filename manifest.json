@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "GuíasCR - Shopify",
+  "version": "1.0.0",
+  "description": "Crea guías de Correos de Costa Rica desde Shopify",
+  "permissions": [
+    "activeTab",
+    "cookies",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://sucursal.correos.go.cr/*",
+    "https://*.myshopify.com/*",
+    "https://guiascr-backend-production.up.railway.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GuíasCR"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://sucursal.correos.go.cr/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
