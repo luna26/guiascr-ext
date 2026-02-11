@@ -466,11 +466,15 @@ async function getxsrfToken() {
 }
 
 async function getCounties(provinceCode) {
-  return await getData('https://sucursal.correos.go.cr/web/canton', `{ "provincia": "${provinceCode}", "tip": "" }`)
+  return await getData('https://sucursal.correos.go.cr/web/canton', `{ "provincia": "${provinceCode}"}`)
 }
 
 async function getDistricts(provinceCode, county) {
   return await getData('https://sucursal.correos.go.cr/web/distrito', `{"provincia":"${provinceCode}","canton":"${county}","tip":""}`)
+}
+
+async function getPostalCode(province, county, district) {
+  return await getData('https://sucursal.correos.go.cr/web/codigo', `{"provincia":"${province}","distrito":"${district}","canton":"${county}"}`)
 }
 
 
@@ -602,7 +606,11 @@ async function buildCorreosCRPayload(order, token) {
 // Obtener token CSRF de Correos CR
 async function getCSRFToken() {
   try {
-    const tabs = await chrome.tabs.query({ url: 'https://sucursal.correos.go.cr/*' });
+    const tabs = await chrome.tabs.query({
+      url: 'https://sucursal.correos.go.cr/*',
+      active: true,
+      currentWindow: true
+    });
 
     if (tabs.length === 0) {
       notification('No hay pestañas de Correos CR abiertas', false)
@@ -758,6 +766,10 @@ document.querySelector('#sender-info-form').addEventListener('submit', async fun
   // Obtener TODOS los valores del form
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData);
+  const { provinciaSender, cantonSender, distritoSender } = data
+  const zipCode = await getPostalCode(provinciaSender, cantonSender, distritoSender)
+
+  data.senderPostalCode = zipCode.postal_code
 
   //loading 
   document.querySelector('#send-sender').textContent = 'Guardando'
@@ -780,6 +792,7 @@ document.querySelector('#sender-info-form').addEventListener('submit', async fun
 
     notification('Información actualizada')
     showContainer()
+    getSenderConfig()
 
   } catch (error) {
     notification(error.message, false)
