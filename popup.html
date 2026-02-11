@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
+<div class="overlay-loader hidden">Cargando...</div>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +11,41 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+
+    .notification {
+      position: absolute;
+      top: 10px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      width: fit-content;
+      padding: 5px 12px;
+      border-radius: 5px;
+    }
+
+    .notification.error {
+      background: #ffcccc;
+      color: #8d1717;
+      border: 1px solid #8d1717;
+    }
+
+    .notification.success {
+      background: #c6ffc8;
+      color: #168f2a;
+      border: 1px solid #168f2a;
+    }
+
+    .overlay-loader {
+      background: #2c82af87;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      position: fixed;
     }
 
     body {
@@ -209,8 +246,20 @@
     .order-header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
       margin-bottom: 8px;
+    }
+
+    .order-header-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #destination_type {
+      padding: 5px;
+      border-radius: 5px;
     }
 
     input[type="checkbox"] {
@@ -296,8 +345,63 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .sender-info {
+      padding: 20px;
+    }
+
+    .sender-info form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sender-info form label {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+      max-width: 300px;
+    }
+
+    .sender-info form label input {
+      height: 30px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .sender-info form label select {
+      height: 30px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    a {
+      color: #667eea;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #back-container {
+      margin-bottom: 10px;
+    }
+
+    #configSender {
+      margin-bottom: 10px;
+      display: block;
+      font-size: 12px;
+      text-decoration: underline;
+    }
+
+    #changeKeyLink {
+      color: red;
+    }
   </style>
 </head>
+
 <body>
   <div class="header">
     <h1>📦 GuíasCR - Shopify</h1>
@@ -314,12 +418,7 @@
 
     <div class="input-group">
       <label class="input-label">Access Key:</label>
-      <input 
-        type="text" 
-        id="accessKeyInput" 
-        class="input-field" 
-        placeholder="sk_..."
-      >
+      <input type="text" id="accessKeyInput" class="input-field" placeholder="sk_...">
     </div>
 
     <button class="btn-primary" id="saveKeyBtn">Guardar y Conectar</button>
@@ -340,6 +439,7 @@
   <!-- Pantalla principal (se muestra cuando hay access key) -->
   <div id="mainScreen" class="main-screen">
     <div class="container">
+      <a href="#" id="configSender">Configurar remitente</a>
       <div class="shop-info" id="shopInfo" style="display: none;">
         <div class="shop-name" id="shopName"></div>
         <a href="#" class="shop-link" id="shopLink" target="_blank">Ver en Shopify</a>
@@ -361,11 +461,85 @@
       </div>
 
       <div class="config-link">
-        <a href="#" id="changeKeyLink">Cambiar Access Key</a>
+        <a href="#" id="changeKeyLink">Remover Access Key</a>
       </div>
+    </div>
+    <div class="sender-info hidden">
+      <form id="sender-info-form">
+        <a href="#" id="back-container">Volver</a>
+
+        <h2>Información del remitente</h2>
+
+        <label>
+          Cédula*
+          <input type="number" required name="senderId" />
+        </label>
+
+        <label>
+          Nombre Completo*
+          <input type="text" required name="senderName" />
+        </label>
+
+        <label>
+          Teléfono*
+          <input type="number" required name="senderPhone" />
+        </label>
+
+        <label>
+          Correo electrónico*
+          <input type="email" required name="senderMail" />
+        </label>
+
+        <label>
+          Provincia*
+          <select name="provinciaSender" id="provinciaSender" required>
+            <option value="">Selecciona una provincia</option>
+            <option value="1">
+              San José
+            </option>
+            <option value="2">
+              Alajuela
+            </option>
+            <option value="3">
+              Cartago
+            </option>
+            <option value="4">
+              Heredia
+            </option>
+            <option value="5">
+              Guanacaste
+            </option>
+            <option value="6">
+              Puntarenas
+            </option>
+            <option value="7">
+              Limón
+            </option>
+          </select>
+        </label>
+
+        <label>
+          Cantón*
+          <select name="cantonSender" id="cantonSender" required>
+          </select>
+        </label>
+
+        <label>
+          Distrito*
+          <select name="distritoSender" id="distritoSender" required>
+          </select>
+        </label>
+
+        <label>
+          Señas exactas de dirección del remitente *
+          <input type="text" required name="senderDirection" />
+        </label>
+        <button class="btn-primary" id="send-sender">Enviar</button>
+      </form>
     </div>
   </div>
 
   <script src="popup.js"></script>
 </body>
+
 </html>

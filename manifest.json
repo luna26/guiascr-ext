@@ -10,6 +10,7 @@
     "scripting"
   ],
   "host_permissions": [
+    "sucursal.correos.go.cr",
     "https://sucursal.correos.go.cr/*",
     "https://*.myshopify.com/*",
     "https://guiascr-backend-production.up.railway.app/*"
@@ -23,8 +24,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://sucursal.correos.go.cr/*"],
-      "js": ["content.js"]
+      "matches": [
+        "https://sucursal.correos.go.cr/*"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
   ]
 }
